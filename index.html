@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>子序列 · 双指针动画</title>
+  <style>
+    :root{color-scheme:light;--ink:#1d3042;--muted:#637787;--blue:#4068db;--green:#159a78;--line:#dce7e9;--paper:#fff;--bg:#f4f8f7}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6} main{max-width:1050px;margin:auto;padding:48px 24px 64px} .eyebrow{color:var(--green);font-size:13px;font-weight:800;letter-spacing:.13em} h1{font-size:clamp(30px,5vw,48px);letter-spacing:-.04em;line-height:1.15;margin:10px 0} .intro{color:var(--muted);margin:0 0 28px;max-width:680px} .layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:18px} .card{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:0 12px 35px #183f4010} .stage{padding:26px} .tag{display:inline-block;background:#e8f6f1;color:#08795d;border-radius:100px;padding:4px 11px;font-size:12px;font-weight:700} h2{font-size:18px;margin:0} .row{margin-top:24px} .row-head{display:flex;gap:10px;align-items:baseline;margin-bottom:12px}.row-head strong{font-size:16px}.row-head span{font-size:13px;color:var(--muted)} .tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:70px;align-content:start}.tile{position:relative;display:grid;place-items:center;width:48px;height:48px;border:1px solid #dbe6e8;border-radius:12px;font-size:21px;font-weight:700;background:#f8fbfa;transition:transform .25s,background .25s,border-color .25s,color .25s}.tile.done{background:#e2f6ee;border-color:#a4dfc9;color:#08795d}.tile.current{background:#eaf0ff;border:2px solid var(--blue);color:var(--blue);transform:translateY(-4px)}.tile.current::after{content:attr(data-pointer);position:absolute;top:48px;color:var(--blue);font-size:11px;font-weight:800}.tile.skipped{opacity:.4}.empty{color:var(--muted);font-size:14px;padding:12px 0}.message{min-height:76px;background:#f1f5ff;border-radius:14px;padding:14px 16px;margin:19px 0;color:#324d99}.message strong{display:block}.controls{display:flex;gap:9px;flex-wrap:wrap}button{border:1px solid var(--line);background:white;color:var(--ink);border-radius:10px;padding:10px 15px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}button:hover{filter:brightness(.97)}button:focus-visible,input:focus-visible{outline:3px solid #a5b9ff;outline-offset:2px}button.primary{background:var(--blue);border-color:var(--blue);color:white}button:disabled{opacity:.45;cursor:not-allowed}.side{padding:24px}.side p,.side li{font-size:14px;color:var(--muted)}.side ol{padding-left:20px}.side li{padding-left:3px;margin:12px 0}.side strong{color:var(--ink)}.rule{border-top:1px solid var(--line);margin:22px 0}.legend{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:8px 0}.dot{width:11px;height:11px;border-radius:3px;background:#eaf0ff;border:1px solid var(--blue)}.dot.green{background:#e2f6ee;border-color:#82cdb2}.form{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;align-items:end}.field{flex:1;min-width:150px}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}.field input{width:100%;padding:10px 12px;border:1px solid #ccdadd;border-radius:10px;font:inherit;color:var(--ink)}.hint{font-size:12px;color:var(--muted);margin:8px 0 0}.examples{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.examples button{font-size:12px;padding:6px 10px}.footer{color:var(--muted);font-size:13px;margin-top:22px}@media(max-width:700px){main{padding:32px 16px}.layout{grid-template-columns:1fr}.stage,.side{padding:20px}.tile{width:42px;height:42px}.tile.current::after{top:42px}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">LEETCODE 392 · 交互式学习</div>
+  <h1>子序列，是怎么找到的？</h1>
+  <p class="intro">跟着两个指针走一遍：在较长的字符串中，从左到右依次寻找目标字符。你可以暂停、单步观察，也可以换一组字符串试试。</p>
+  <div class="layout">
+    <section class="card stage" aria-label="子序列动画">
+      <span class="tag">双指针演示</span>
+      <div class="row"><div class="row-head"><strong>目标字符串 s</strong><span>要依次找到的字符</span></div><div id="sRow" class="tiles"></div></div>
+      <div class="row"><div class="row-head"><strong>原字符串 t</strong><span>从左到右扫描</span></div><div id="tRow" class="tiles"></div></div>
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+      <div class="controls"><button id="play" class="primary">▶ 自动播放</button><button id="step">下一步 →</button><button id="reset">↺ 重新开始</button></div>
+      <div class="rule"></div>
+      <h2>自己试一试</h2>
+      <form id="form" class="form"><div class="field"><label for="sInput">目标字符串 s</label><input id="sInput" value="ace" maxlength="30" autocomplete="off"></div><div class="field"><label for="tInput">原字符串 t</label><input id="tInput" value="abcde" maxlength="30" autocomplete="off"></div><button type="submit">应用字符串</button></form>
+      <p class="hint">每个字符串最多 30 个字符；s 可以为空。输入后点击「应用字符串」。</p>
+      <div class="examples"><button type="button" data-s="ace" data-t="abcde">✓ 匹配：ace / abcde</button><button type="button" data-s="aec" data-t="abcde">✕ 顺序不对：aec / abcde</button><button type="button" data-s="aa" data-t="abc">✕ 字符不足：aa / abc</button></div>
+    </section>
+    <aside class="card side"><h2>观察什么？</h2><ol><li><strong>看 s 的指针</strong><br>它指向下一个需要找的字符。</li><li><strong>看 t 的指针</strong><br>每比较一次，它都会向右移动。</li><li><strong>字符相同时</strong><br>s 的指针也向右移动，继续找下一个字符。</li></ol><div class="rule"></div><div class="legend"><span class="dot"></span>当前指针</div><div class="legend"><span class="dot green"></span>已经匹配</div><p>如果 s 的所有字符都找到了，就说明它是 t 的子序列。字符可以不连续，但顺序不能改变。</p></aside>
+  </div>
+  <p class="footer">小提示：空字符串也是任何字符串的子序列，因为可以删除所有字符。</p>
+</main>
+<script>
+  const sInput=document.getElementById('sInput'),tInput=document.getElementById('tInput'),sRow=document.getElementById('sRow'),tRow=document.getElementById('tRow'),message=document.getElementById('message'),play=document.getElementById('play'),stepButton=document.getElementById('step');
+  let s=[],t=[],i=0,j=0,matched=[],timer=null,finished=false,title='',detail='';
+  function stop(){if(timer!==null){clearInterval(timer);timer=null}play.textContent='▶ 自动播放'}
+  function renderRow(container,chars,kind){container.replaceChildren();if(!chars.length){const empty=document.createElement('span');empty.className='empty';empty.textContent='（空字符串）';container.append(empty);return}chars.forEach((char,index)=>{const tile=document.createElement('span');tile.className='tile';tile.textContent=char;if(kind==='s'){if(index<i)tile.classList.add('done');else if(index===i&&!finished){tile.classList.add('current');tile.dataset.pointer='i'}}else{if(matched.includes(index))tile.classList.add('done');else if(index<j)tile.classList.add('skipped');if(index===j&&!finished){tile.classList.add('current');tile.dataset.pointer='j'}}container.append(tile)})}
+  function render(){renderRow(sRow,s,'s');renderRow(tRow,t,'t');message.replaceChildren();const strong=document.createElement('strong');strong.textContent=title;message.append(strong,document.createTextNode(detail));stepButton.disabled=finished;play.disabled=finished}
+  function reset(){stop();s=Array.from(sInput.value);t=Array.from(tInput.value);i=0;j=0;matched=[];finished=false;if(!s.length){finished=true;title='匹配成功！';detail='s 是空字符串，因此它是 t 的子序列。'}else if(!t.length){finished=true;title='匹配结束';detail='t 是空字符串，无法找到非空的 s。'}else{title='准备好了';detail='从 s 和 t 的第一个字符开始比较。点击「下一步」观察。'}render()}
+  function step(){if(finished)return;const a=s[i],b=t[j];if(a===b){matched.push(j);i++;j++;if(i===s.length){finished=true;title='匹配成功！';detail='s 的所有字符都按顺序找到了。'}else if(j===t.length){finished=true;title='匹配结束';detail='虽然刚才找到了 '+a+'，但 t 已经结束，s 还有字符没有找到。'}else{title='字符相同：'+a+' = '+b;detail='找到了一个字符，两个指针都向右移动。'}}else{j++;if(j===t.length){finished=true;title='匹配结束';detail='t 已经遍历完，但还没有找到需要的 '+a+'，所以 s 不是 t 的子序列。'}else{title='字符不同：'+a+' ≠ '+b;detail='跳过 t 中的这个字符，继续寻找 '+a+'。'}}if(finished)stop();render()}
+  play.addEventListener('click',()=>{if(timer!==null){stop();return}play.textContent='Ⅱ 暂停';step();if(!finished)timer=setInterval(step,1100)});stepButton.addEventListener('click',()=>{stop();step()});document.getElementById('reset').addEventListener('click',reset);document.getElementById('form').addEventListener('submit',event=>{event.preventDefault();reset()});document.querySelectorAll('[data-s]').forEach(button=>button.addEventListener('click',()=>{sInput.value=button.dataset.s;tInput.value=button.dataset.t;reset()}));reset();
+</script>
+</body>
+</html>
